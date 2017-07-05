@@ -1,8 +1,8 @@
 module MastodonHealthchecker
   class NetworkInspectionResult
-    def initialize(v4: false, v6: false)
-      @v4 = v4
-      @v6 = v6
+    def initialize(options = {})
+      @v4 = options[:v4]
+      @v6 = options[:v6]
     end
 
     def to_s
