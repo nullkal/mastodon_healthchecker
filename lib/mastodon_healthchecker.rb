@@ -7,8 +7,8 @@ module MastodonHealthchecker
 
   def self.perform(host)
     records = DNSRecords.new(host)
-    info_v4 = InstanceInfo.fetch(host, records.v4_addresses) if records.v4_addresses.any?
-    info_v6 = InstanceInfo.fetch(host, records.v6_addresses) if records.v6_addresses.any?
+    info_v4 = InstanceInfo.fetch(host, records.v4_addresses)
+    info_v6 = InstanceInfo.fetch(host, records.v6_addresses)
 
     Result.new(
       { v4: records.v4_addresses.any?, v6: records.v6_addresses.any? },

@@ -15,7 +15,7 @@ module MastodonHealthchecker
         default_resolver = Resolv::DefaultResolver
 
         hash_hosts = HashHosts.new({ "#{host}" => addresses })
-        Resolv::DefaultResolver.replace_resolvers([hash_hosts, Resolv::DNS.new])
+        Resolv::DefaultResolver.replace_resolvers([hash_hosts])
 
         result = nil
         begin
