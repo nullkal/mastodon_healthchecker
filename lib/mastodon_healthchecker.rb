@@ -1,20 +1,19 @@
+require 'mastodon_healthchecker/dns_records'
+require 'mastodon_healthchecker/instance_info'
 require 'mastodon_healthchecker/version'
 
 module MastodonHealthchecker
-  autoload :AvailabilityInspector,
-           'mastodon_healthchecker/inspectors/availability'
-  autoload :RecordExistenceInspector,
-           'mastodon_healthchecker/inspectors/record_existence'
+  Result = Struct.new('Result', :exists_record, :up, :info)
 
-  DefaultInspectionItems = {
-    exists_record: RecordExistenceInspector,
-    up: AvailabilityInspector
-  }.freeze
+  def self.perform(host)
+    records = DNSRecords.new(host)
+    info_v4 = InstanceInfo.fetch(host, records.v4_addresses) if records.v4_addresses.any?
+    info_v6 = InstanceInfo.fetch(host, records.v6_addresses) if records.v6_addresses.any?
 
-  def self.perform(host, inspection_items: DefaultInspectionItems)
-    inspection_items.inject({}) do |result, (key, item)|
-      result[key] = item.call(host)
-      result
-    end
+    Result.new(
+      { v4: records.v4_addresses.any?, v6: records.v6_addresses.any? },
+      { v4: !info_v4.nil?, v6: !info_v6.nil? },
+      info_v4 || info_v6 || nil
+    )
   end
 end

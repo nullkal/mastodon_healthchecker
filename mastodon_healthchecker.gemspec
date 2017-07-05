@@ -29,4 +29,9 @@ and other statuses of a mastodon instance.
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.49.1'
+
+  spec.add_runtime_dependency 'faraday', '~> 0.9.2'
+  spec.add_runtime_dependency 'faraday-encoding', '~> 0.0.4'
+  spec.add_runtime_dependency 'faraday_middleware', '~> 0.10.0'
+  spec.add_runtime_dependency 'nokogiri', '~> 1.6', '>= 1.6.7.2'
 end
