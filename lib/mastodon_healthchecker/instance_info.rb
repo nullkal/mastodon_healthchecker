@@ -1,9 +1,9 @@
-require 'json'
-require 'mastodon_healthchecker/hash_hosts'
-require 'nokogiri'
 require 'faraday'
 require 'faraday_middleware'
 require 'faraday/encoding'
+require 'json'
+require 'mastodon_healthchecker/hash_hosts'
+require 'nokogiri'
 require 'resolv'
 require 'resolv-replace'
 
@@ -53,12 +53,15 @@ module MastodonHealthchecker
       @description = nil
       @extended_description = nil
       @email = nil
+
       @opened = nil
+      @https_configured = nil
     end
 
     def parse_about(response)
       doc = Nokogiri::HTML.parse(response.body)
       @opened = doc.xpath("//*[@class='closed-registrations-message']").empty?
+      @https_configured = response.to_hash[:url].to_s.start_with?('https://')
     end
 
     def parse_about_more(response)
