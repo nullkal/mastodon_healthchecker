@@ -17,20 +17,17 @@ module MastodonHealthchecker
         hash_hosts = HashHosts.new({ "#{host}" => addresses })
         Resolv::DefaultResolver.replace_resolvers([hash_hosts])
 
-        result = nil
         begin
           info = InstanceInfo.new
           info.parse_about(get(host, '/about'))
           info.parse_about_more(get(host, '/about/more'))
           info.parse_instance(get(host, '/api/v1/instance'))
-          result = info
-        rescue Faraday::ClientError
-        rescue Nokogiri::SyntaxError
-        rescue JSON::ParseError
+          info
+        rescue Faraday::ClientError, Nokogiri::SyntaxError, JSON::ParseError
+          nil
+        ensure
+          Resolv::DefaultResolver.replace_resolvers(default_resolver)
         end
-
-        Resolv::DefaultResolver.replace_resolvers(default_resolver)
-        result
       end
 
       private
@@ -81,7 +78,7 @@ module MastodonHealthchecker
       instance = JSON.parse(response.body)
       @version = instance['version']
       @description = instance['description']
-      @email = instance['email']
+      @email = instance['email'] unless instance['email'].empty?
     end
 
     attr_reader :version, :users, :statuses, :connections,
