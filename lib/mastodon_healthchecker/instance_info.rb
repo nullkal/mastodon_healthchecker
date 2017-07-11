@@ -44,6 +44,7 @@ module MastodonHealthchecker
     end
 
     def initialize
+      @title = nil
       @version = nil
 
       @users = nil
@@ -79,12 +80,13 @@ module MastodonHealthchecker
 
     def parse_instance(response)
       instance = JSON.parse(response.body)
+	  @title = instance['title']
       @version = instance['version']
       @description = instance['description']
       @email = instance['email'] unless instance['email'].empty?
     end
 
-    attr_reader :version, :users, :statuses, :connections,
-                :description, :extended_description, :email, :opened
+    attr_reader :title, :version, :users, :statuses, :connections,
+                :description, :extended_description, :email, :opened, :https_configured
   end
 end
