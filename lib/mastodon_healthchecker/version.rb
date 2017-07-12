@@ -1,3 +1,3 @@
 module MastodonHealthchecker
-  VERSION = '0.1.0.pre.6'.freeze
+  VERSION = '0.1.0.pre.7'.freeze
 end
