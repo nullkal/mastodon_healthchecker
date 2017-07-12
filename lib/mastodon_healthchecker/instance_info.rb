@@ -1,9 +1,9 @@
 require 'faraday'
 require 'faraday_middleware'
 require 'faraday/encoding'
-require 'json'
 require 'mastodon_healthchecker/hash_hosts'
 require 'nokogiri'
+require 'oj'
 require 'resolv'
 require 'resolv-replace'
 
@@ -23,7 +23,7 @@ module MastodonHealthchecker
           info.parse_about_more(get(host, '/about/more'))
           info.parse_instance(get(host, '/api/v1/instance'))
           info
-        rescue Faraday::ClientError, Nokogiri::SyntaxError, JSON::ParseError
+        rescue Faraday::ClientError, Nokogiri::SyntaxError, Oj::Error
           nil
         ensure
           Resolv::DefaultResolver.replace_resolvers(default_resolver)
@@ -79,8 +79,8 @@ module MastodonHealthchecker
     end
 
     def parse_instance(response)
-      instance = JSON.parse(response.body)
-	  @title = instance['title']
+      instance = Oj.load(response.body)
+      @title = instance['title']
       @version = instance['version']
       @description = instance['description']
       @email = instance['email'] unless instance['email'].empty?
