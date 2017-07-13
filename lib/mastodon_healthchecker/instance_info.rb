@@ -79,7 +79,7 @@ module MastodonHealthchecker
     end
 
     def parse_instance(response)
-      instance = Oj.load(response.body)
+      instance = Oj.strict_load(response.body)
       @title = instance['title']
       @version = instance['version']
       @description = instance['description']
